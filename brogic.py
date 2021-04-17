@@ -1,7 +1,6 @@
 from flask import Flask, jsonify, request, render_template
 import pymongo
 import pprint
-import dns
 
 
 client = pymongo.MongoClient("mongodb+srv://bruhuser:griffith@cluster0.ccamn.mongodb.net/articles?retryWrites=true&w=majority")

@@ -2,6 +2,15 @@ from flask import Flask, jsonify, request, render_template
 import pymongo
 import pprint
 import dns
+from brogic import access_and_put_in_list_mongo_docs
+from bson import json_util
+import json
+import gunicorn
+
+client = pymongo.MongoClient("mongodb+srv://bruhuser:griffith@cluster0.ccamn.mongodb.net/articles?retryWrites=true&w=majority")
+db = client.get_database('articles')
+collections = [db.nytimes, db.reuters, db.wired, db.economist, db.bbc]
+doc_list = []
 app = Flask(__name__)
 
 
@@ -12,9 +21,8 @@ def after_request(response):
     return response
 
 
-@app.route('/hello', methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST'])
 def hello():
-
     # POST request
     if request.method == 'POST':
         print('Incoming..')
@@ -23,14 +31,4 @@ def hello():
 
     # GET request
     else:
-        message = db.nytimes.find()
-        return jsonify(message)  # serialize and use JSON headers
-
-@app.route('/test')
-def test_page():
-    # look inside `templates` and serve `index.html`
-    return render_template('index.html')
-
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000,debug=True)
+        return jsonify(access_and_put_in_list_mongo_docs(collections))
