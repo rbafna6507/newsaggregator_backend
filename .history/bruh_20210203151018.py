@@ -5,6 +5,7 @@ import dns
 from brogic import access_and_put_in_list_mongo_docs
 from bson import json_util
 import json
+import gunicorn
 
 client = pymongo.MongoClient("mongodb+srv://bruhuser:griffith@cluster0.ccamn.mongodb.net/articles?retryWrites=true&w=majority")
 db = client.get_database('articles')
@@ -20,9 +21,8 @@ def after_request(response):
     return response
 
 
-@app.route('/hello', methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST'])
 def hello():
-
     # POST request
     if request.method == 'POST':
         print('Incoming..')
@@ -32,6 +32,3 @@ def hello():
     # GET request
     else:
         return jsonify(access_and_put_in_list_mongo_docs(collections))
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000,debug=True)
